@@ -1,0 +1,37 @@
+server {
+	listen 80;
+	server_name pins.primeairtime.com;
+	return 301 https://$host$request_uri;
+}
+server {
+       	listen 443;
+       	server_name pins.primeairtime.com;
+	return 301 https://clients.primeairtime.com/pin;
+#
+       	root /var/www/coreui;
+       	index index.html;
+#
+       	ssl on;
+       	ssl_certificate /usr/local/b2bapi/certs/pa.crt;
+       	ssl_certificate_key /usr/local/b2bapi/certs/pa.key;
+#
+       	ssl_session_timeout 5m;
+#
+       	ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+       	ssl_ciphers "HIGH:!aNULL:!MD5 or HIGH:!aNULL:!MD5:!3DES";
+       	ssl_prefer_server_ciphers on;
+#
+	location /api/ {
+		rewrite ^ https://clients.primeairtime.com$request_uri redirect;
+		break;
+	}
+       	location /pin {
+		proxy_set_header Host            $host;
+       		proxy_pass http://10.127.8.29:3750;
+		break;
+       	}
+	location / {
+                return 301 https://clients.primeairtime.com/pin;
+        	break;
+	}
+}

@@ -1,0 +1,2 @@
+ls
+nodemon bin/www 
